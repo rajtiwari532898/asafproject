@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="package" name="ITSF">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+   	<property name="TOMCAT_HOME" value="D:\Maven\apache-tomcat-7.0.35" />
+	
+    <property name="project.name" value="${ant.project.name}" />
+     <property name="project.web.dir" value="WebContent" />
+   <property name="project.lib.dir" value="${project.web.dir}/WEB-INF/lib" />
+      <property name="project.war" value="${project.name}.war" />
+      <property name="project.runtime.lib" value="${TOMCAT_HOME}/lib" />
+      <property name="project.deploy.location" value="${TOMCAT_HOME}/webapps" />
+    
+    <path id="EAR Libraries.libraryclasspath"/>
+   
+	<path id="classpath.runtime">
+			<fileset dir="${project.runtime.lib}" includes="*.jar" />
+		</path>
+		<path id="classpath.lib">
+			<fileset dir="${project.lib.dir}" includes="*.jar" />
+		</path>
+		<path id="classpath">
+			<pathelement location="WebContent/WEB-INF/classes" />
+			<path refid="classpath.runtime" />
+			<path refid="classpath.lib" />
+			<path refid="EAR Libraries.libraryclasspath"/>
+		</path>
+		
+	
+    <target name="init" depends="cleanall">
+        <mkdir dir="WebContent/WEB-INF/classes"/>
+   	 <echo message="copyJava"/>
+        <copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
+            <fileset dir="javaSource">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+      	 <echo message="copyResource"/>
+        <copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
+            <fileset dir="resources">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+     	 <echo message="copyWsClient"/>
+        <copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
+            <fileset dir="wsClient">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="WebContent/WEB-INF/classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" includeantruntime="false" >
+            <src path="javaSource"/>
+            <src path="resources"/>
+            <src path="wsClient"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+	<target depends="build" name="package" description="Packagign all files into ${project.war}">
+		 <echo message="${project.war}"/>
+			<war destfile="${project.war}" index="true" needxmlfile="false">
+				<fileset dir="${project.web.dir}">
+					<include name="**/*.*" />
+				</fileset>
+			</war>
+		</target>
+</project>
